@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olidia 365mg - Product Intelligence Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: The SPA is designed as a sales and product intelligence dashboard with a three-part user flow. 1) 'Overview' to introduce Olidia, its pros, cons, and side effects using interactive cards for quick learning. 2) 'Comparison' for a deep dive against competitors, featuring a dynamic table and bar chart that users control, empowering them to analyze the market. 3) 'Strategy' to provide actionable sales insights via a clean tabbed interface. This structure guides the user from product knowledge to market analysis and finally to sales application, making it a highly effective tool for a medical sales representative or a clinic owner. -->
+    <!-- Visualization & Content Choices: Report Info: Olidia's key attributes (pros, cons, side effects) -> Goal: Inform -> Viz/Presentation Method: Interactive cards (HTML/CSS/JS) for focused, digestible information -> Interaction: Click-to-reveal details -> Justification: Breaks down complex information, improving retention and engagement. Report Info: Competitive landscape -> Goal: Compare -> Viz/Presentation Method: Dynamic HTML table paired with a Chart.js Bar Chart -> Interaction: Checkboxes to select products to compare, which dynamically updates both the table and the chart -> Justification: Provides a powerful, user-controlled analytical tool for direct comparison of both qualitative and quantitative data. Report Info: Sales tactics & positioning -> Goal: Organize & Educate -> Viz/Presentation Method: Tabbed content area (HTML/CSS/JS) -> Interaction: Click tabs to switch between sales pitch, result explanation, and competitive angles -> Justification: Organizes dense textual information into logical, easy-to-navigate sections. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #FDFBF6;
+            color: #4a4a4a;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #BF9270;
+            border-bottom-color: #BF9270;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #F5F0E8;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .tab-button {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .tab-button.active {
+            background-color: #BF9270;
+            color: #FFFFFF;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-[#BF9270]">Olidia 365mg</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#overview" class="nav-link pb-1">ภาพรวมผลิตภัณฑ์</a>
+                <a href="#comparison" class="nav-link pb-1">เปรียบเทียบผลิตภัณฑ์</a>
+                <a href="#strategy" class="nav-link pb-1">สรุป</a>
+            </div>
+            <div class="md:hidden">
+                <select id="mobile-nav" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#BF9270] focus:border-[#BF9270] block w-full p-2.5">
+                    <option value="#overview">ภาพรวม</option>
+                    <option value="#comparison">เปรียบเทียบ</option>
+                    <option value="#strategy">สรุป</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        
+        <!-- Section 1: Overview -->
+        <section id="overview" class="mb-20 scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">ภาพรวม Olidia 365mg</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    Olidia คือสารกระตุ้นการสร้างคอลลาเจน (Collagen Biostimulator) ยุคใหม่ ที่ใช้สารสำคัญคือ PLLA (Poly-L-Lactic Acid) ในการฟื้นฟูโครงสร้างผิวจากภายใน ไม่ใช่การเติมเต็มแบบชั่วคราว แต่เป็นการกระตุ้นให้ร่างกายสร้างคอลลาเจนของตัวเองขึ้นมาใหม่เพื่อผลลัพธ์ที่ดูเป็นธรรมชาติและยั่งยืน
+                </p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card: Pros -->
+                <div class="card rounded-xl p-6 text-center">
+                    <div class="mb-4 text-3xl">👍</div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">ข้อดี</h3>
+                    <ul class="text-left text-gray-600 space-y-2 list-disc list-inside">
+                        <li>ผลลัพธ์เป็นธรรมชาติ</li>
+                        <li>อยู่ได้ยาวนาน (ถึง 2 ปี)</li>
+                        <li>ปรับปรุงคุณภาพผิวโดยรวม</li>
+                        <li>อนุภาคทรงกลม ลดโอกาสเกิดก้อน</li>
+                        <li>ย่อยสลายได้ทางชีวภาพ</li>
+                    </ul>
+                </div>
+                <!-- Card: Cons -->
+                <div class="card rounded-xl p-6 text-center">
+                    <div class="mb-4 text-3xl">👎</div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">ข้อควรพิจารณา</h3>
+                    <ul class="text-left text-gray-600 space-y-2 list-disc list-inside">
+                        <li>ไม่เห็นผลลัพธ์ในทันที</li>
+                        <li>ใช้เวลา 4-6 สัปดาห์จึงเริ่มเห็นผล</li>
+                        <li>อาจต้องทำมากกว่า 1 ครั้ง</li>
+                        <li>ต้องอาศัยเทคนิคการฉีดที่ถูกต้อง</li>
+                        <li>จำเป็นต้องนวดหลังทำ</li>
+                    </ul>
+                </div>
+                <!-- Card: Side Effects -->
+                <div class="card rounded-xl p-6 text-center">
+                    <div class="mb-4 text-3xl">⚠️</div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">ผลข้างเคียงที่อาจเกิดขึ้น</h3>
+                    <ul class="text-left text-gray-600 space-y-2 list-disc list-inside">
+                        <li>อาการบวม, แดง, ช้ำ บริเวณที่ฉีด</li>
+                        <li>อาการปวดเล็กน้อย</li>
+                        <li>การเกิดก้อนใต้ผิว (หากเทคนิคไม่ถูกต้อง)</li>
+                        <li>การอักเสบ (พบได้น้อย)</li>
+                        <li>อาการแพ้ (พบได้น้อยมาก)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Comparison -->
+        <section id="comparison" class="mb-20 scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">เปรียบเทียบผลิตภัณฑ์ในตลาด</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    เลือกผลิตภัณฑ์ที่ต้องการเปรียบเทียบกับ Olidia เพื่อดูความแตกต่างในคุณสมบัติหลักๆ ทั้งในรูปแบบตารางและกราฟ ข้อมูลนี้จะช่วยให้เข้าใจจุดเด่นและตำแหน่งทางการตลาดของแต่ละผลิตภัณฑ์ได้ชัดเจนยิ่งขึ้น
+                </p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8">
+                <div class="flex flex-wrap justify-center gap-4 md:gap-6 mb-8" id="comparator-checkboxes">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" value="Olidia" class="h-5 w-5 rounded border-gray-300 text-[#BF9270] focus:ring-[#BF9270]" checked>
+                        <span class="text-gray-700 font-medium">Olidia</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" value="Sculptra" class="h-5 w-5 rounded border-gray-300 text-[#BF9270] focus:ring-[#BF9270]" checked>
+                        <span class="text-gray-700 font-medium">Sculptra</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" value="Lenisna" class="h-5 w-5 rounded border-gray-300 text-[#BF9270] focus:ring-[#BF9270]" checked>
+                        <span class="text-gray-700 font-medium">Lenisna</span>
+                    </label>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-max text-left" id="comparison-table">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="p-4 font-semibold text-gray-600">คุณสมบัติ</th>
+                                <th data-product="Olidia" class="p-4 font-semibold text-gray-600 text-center">Olidia</th>
+                                <th data-product="Sculptra" class="p-4 font-semibold text-gray-600 text-center">Sculptra</th>
+                                <th data-product="Lenisna" class="p-4 font-semibold text-gray-600 text-center">Lenisna</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows will be dynamically generated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                 <h3 class="text-2xl font-semibold text-center text-gray-800 mb-6">กราฟเปรียบเทียบระยะเวลาเห็นผลและผลลัพธ์</h3>
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Strategy -->
+        <section id="strategy" class="scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">สรุป</h2>
+                 <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    หัวใจของการนำเสนอผลิตภัณฑ์กลุ่ม Biostimulator คือการสร้างความเข้าใจและจัดการความคาดหวังของลูกค้าอย่างถูกต้อง ส่วนนี้ได้รวบรวมแนวทางการสื่อสารในมิติต่างๆ เพื่อให้การแนะนำ Olidia มีประสิทธิภาพสูงสุด
+                </p>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-6 flex flex-wrap justify-center border-b border-gray-200">
+                    <button class="tab-button active py-3 px-6 font-semibold text-gray-500 rounded-t-lg" data-target="results">การอธิบายผลลัพธ์</button>
+                    <button class="tab-button py-3 px-6 font-semibold text-gray-500 rounded-t-lg" data-target="positioning">การเปรียบเทียบกับคู่แข่ง</button>
+                </div>
+
+                <div id="strategy-content" class="bg-white rounded-xl shadow-lg p-8 fade-in">
+                    <!-- Results Content -->
+                    <div id="results" class="tab-content">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">จัดการความคาดหวังและอธิบายผลลัพธ์</h3>
+                        <ul class="space-y-4 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-orange-500 mr-3 mt-1">🌱</span>
+                                <div>
+                                    <strong class="block">เปรียบเทียบกับการ "ปลูกต้นไม้"</strong>
+                                    <span class="text-gray-600">"การฉีด Olidia เหมือนการเพาะเมล็ดพันธุ์คอลลาเจนใต้ผิว ต้องใช้เวลา 4-6 สัปดาห์เพื่อให้เมล็ดพันธุ์งอกงามและเติบโตเป็นโครงสร้างผิวที่แข็งแรง ผลลัพธ์ที่ได้จึงค่อยเป็นค่อยไปแต่ยั่งยืน"</span>
+                                </div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-orange-500 mr-3 mt-1">🗓️</span>
+                                <div>
+                                    <strong class="block">กำหนดไทม์ไลน์ที่ชัดเจน</strong>
+                                    <span class="text-gray-600">"หลังฉีด 1 เดือน จะเริ่มรู้สึกผิวแน่นขึ้น, เดือนที่ 2-3 จะเห็นการเปลี่ยนแปลงชัดเจนเรื่องวอลลุ่มและริ้วรอย และจะดีขึ้นต่อเนื่อง ผลลัพธ์เต็มที่จะอยู่ที่ประมาณ 3-6 เดือน"</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-orange-500 mr-3 mt-1">📸</span>
+                                <div>
+                                    <strong class="block">ใช้ภาพถ่ายเพื่อติดตามผล</strong>
+                                    <span class="text-gray-600">แนะนำให้คลินิกถ่ายรูปคนไข้เก็บไว้ทุกครั้งที่มาติดตามผล เพื่อให้คนไข้เห็นการเปลี่ยนแปลงที่เกิดขึ้นจริงเมื่อเทียบกับรูปก่อนทำ</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Positioning Content -->
+                    <div id="positioning" class="tab-content hidden">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">การวางตำแหน่งผลิตภัณฑ์เทียบกับคู่แข่ง</h3>
+                        <ul class="space-y-4 text-gray-700">
+                             <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">🎯</span>
+                                <div>
+                                    <strong class="block">เทียบกับ Sculptra</strong>
+                                    <span class="text-gray-600">"Olidia ใช้เทคโนโลยี PLLA ที่ได้รับการยอมรับเช่นเดียวกับ Sculptra แต่มาพร้อมการพัฒนาอนุภาคให้เป็นทรงกลมที่ทันสมัยกว่า เพื่อผลลัพธ์ที่เรียบเนียนและลดโอกาสเกิดผลข้างเคียง มอบผลลัพธ์คุณภาพสูงในราคาที่เข้าถึงง่ายกว่า"</span>
+                                </div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">🎯</span>
+                                <div>
+                                    <strong class="block">เทียบกับ Lenisna</strong>
+                                    <span class="text-gray-600">"Lenisna ให้ผลด้านความชุ่มชื้นทันทีจาก HA แต่ Olidia มุ่งเน้นไปที่การกระตุ้นคอลลาเจนอย่างเข้มข้นด้วย PLLA เพียงอย่างเดียว เพื่อการสร้างโครงสร้างผิวใหม่ที่แข็งแรงและให้ผลลัพธ์ที่ยาวนานที่สุด หากเป้าหมายหลักคือการฟื้นฟูโครงสร้างผิวในระยะยาว Olidia คือคำตอบที่ตรงจุด"</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">🎯</span>
+                                <div>
+                                    <strong class="block">เทียบกับ HA Fillers</strong>
+                                    <span class="text-gray-600">"ฟิลเลอร์ HA คือการ 'ยืม' วอลลุ่มมาเติมเต็ม แต่ Olidia คือการ 'สร้าง' วอลลุ่มที่เป็นของผิวเราเองจริงๆ ผลลัพธ์จึงดูเป็นธรรมชาติ ไม่เป็นก้อน และปรับตัวไปพร้อมกับใบหน้าของเราเมื่อเวลาผ่านไป"</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-gray-100 mt-20">
+        <div class="container mx-auto px-6 py-4 text-center text-gray-500">
+            <p>ข้อมูลในแดชบอร์ดนี้จัดทำขึ้นเพื่อวัตถุประสงค์ในการให้ข้อมูลและการศึกษาเท่านั้น ควรปรึกษาแพทย์ผู้เชี่ยวชาญเพื่อรับคำแนะนำที่เหมาะสมกับแต่ละบุคคล</p>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const comparisonData = {
+                products: {
+                    Olidia: {
+                        'สารประกอบหลัก': 'PLLA',
+                        'รูปทรงอนุภาค': 'ทรงกลม (Spherical)',
+                        'กลไกการทำงาน': 'กระตุ้นคอลลาเจน',
+                        'เริ่มเห็นผล (Onset)': '4-6 สัปดาห์',
+                        'ผลลัพธ์นาน (Duration)': 'ประมาณ 24 เดือน',
+                        'จุดเด่น': 'อนุภาคเรียบเนียน'
+                    },
+                    Sculptra: {
+                        'สารประกอบหลัก': 'PLLA',
+                        'รูปทรงอนุภาค': 'ไม่แน่นอน (Irregular)',
+                        'กลไกการทำงาน': 'กระตุ้นคอลลาเจน',
+                        'เริ่มเห็นผล (Onset)': '4-6 สัปดาห์',
+                        'ผลลัพธ์นาน (Duration)': 'ประมาณ 25 เดือน',
+                        'จุดเด่น': 'แบรนด์ดั้งเดิม มีข้อมูลยาวนาน'
+                    },
+                    Lenisna: {
+                        'สารประกอบหลัก': 'PDLLA + HA',
+                        'รูปทรงอนุภาค': 'ทรงกลม (Spherical)',
+                        'กลไกการทำงาน': 'กระตุ้นคอลลาเจน + ให้ความชุ่มชื้นทันที',
+                        'เริ่มเห็นผล (Onset)': 'เห็นผล HA ทันที, ผล PLLA ตามมา',
+                        'ผลลัพธ์นาน (Duration)': 'ประมาณ 18-24 เดือน',
+                        'จุดเด่น': 'Hybrid เห็นผลเร็วขึ้น'
+                    }
+                },
+                features: [
+                    'สารประกอบหลัก',
+                    'รูปทรงอนุภาค',
+                    'กลไกการทำงาน',
+                    'เริ่มเห็นผล (Onset)',
+                    'ผลลัพธ์นาน (Duration)',
+                    'จุดเด่น'
+                ]
+            };
+
+            const chartData = {
+                 Olidia: { onset: 1.5, duration: 24 },
+                 Sculptra: { onset: 1.5, duration: 25 },
+                 Lenisna: { onset: 0.5, duration: 21 }
+            };
+
+            const tableBody = document.querySelector('#comparison-table tbody');
+            const checkboxes = document.querySelectorAll('#comparator-checkboxes input');
+            const tableHeaders = document.querySelectorAll('#comparison-table th[data-product]');
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            let comparisonChart;
+
+            function updateTable() {
+                const selectedProducts = Array.from(checkboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+
+                tableBody.innerHTML = '';
+                comparisonData.features.forEach(feature => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-200';
+                    let cells = `<td class="p-4 font-medium text-gray-800">${feature}</td>`;
+                    Object.keys(comparisonData.products).forEach(productName => {
+                         const isSelected = selectedProducts.includes(productName);
+                         cells += `<td data-product="${productName}" class="p-4 text-center text-gray-600 ${isSelected ? '' : 'hidden'}">${comparisonData.products[productName][feature]}</td>`;
+                    });
+                    row.innerHTML = cells;
+                    tableBody.appendChild(row);
+                });
+
+                tableHeaders.forEach(th => {
+                    if (selectedProducts.includes(th.dataset.product)) {
+                        th.classList.remove('hidden');
+                    } else {
+                        th.classList.add('hidden');
+                    }
+                });
+
+                 Array.from(tableBody.querySelectorAll('td[data-product]')).forEach(td => {
+                    if (selectedProducts.includes(td.dataset.product)) {
+                        td.classList.remove('hidden');
+                    } else {
+                        td.classList.add('hidden');
+                    }
+                });
+            }
+
+            function updateChart() {
+                const selectedProducts = Array.from(checkboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+
+                const labels = selectedProducts;
+                const onsetData = selectedProducts.map(p => chartData[p].onset);
+                const durationData = selectedProducts.map(p => chartData[p].duration);
+                
+                if (comparisonChart) {
+                    comparisonChart.destroy();
+                }
+
+                comparisonChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'เริ่มเห็นผล (เดือน)',
+                                data: onsetData,
+                                backgroundColor: 'rgba(191, 146, 112, 0.6)',
+                                borderColor: 'rgba(191, 146, 112, 1)',
+                                borderWidth: 1,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'ผลลัพธ์นาน (เดือน)',
+                                data: durationData,
+                                backgroundColor: 'rgba(126, 132, 118, 0.6)',
+                                borderColor: 'rgba(126, 132, 118, 1)',
+                                borderWidth: 1,
+                                yAxisID: 'y'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y + ' เดือน';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'จำนวนเดือน'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    updateTable();
+                    updateChart();
+                });
+            });
+
+            // Strategy Tabs
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const strategyContent = document.getElementById('strategy-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    const targetId = button.dataset.target;
+                    
+                    strategyContent.classList.remove('fade-in');
+                    void strategyContent.offsetWidth; 
+                    strategyContent.classList.add('fade-in');
+
+
+                    tabContents.forEach(content => {
+                        if (content.id === targetId) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+            
+            // Navigation scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+             // Mobile navigation
+            const mobileNav = document.getElementById('mobile-nav');
+            mobileNav.addEventListener('change', function(e) {
+                const targetId = e.target.value;
+                 document.querySelector(targetId).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+            });
+
+
+            // Initial load
+            updateTable();
+            updateChart();
+        });
+    </script>
+
+</body>
+</html>
